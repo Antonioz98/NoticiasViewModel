@@ -5,13 +5,14 @@ import br.com.alura.technews.di.modules.appModules
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
-class AppApplcation : Application() {
+class AppApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
         startKoin {
-            androidContext(this@AppApplcation)
+            androidContext(this@AppApplication)
             modules(appModules)
         }
     }
+
 }

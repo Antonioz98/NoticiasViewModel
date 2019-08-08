@@ -8,7 +8,7 @@ import br.com.alura.technews.database.dao.NoticiaDAO
 import br.com.alura.technews.model.Noticia
 import br.com.alura.technews.retrofit.webclient.NoticiaWebClient
 
-class NoticiaRepository(private val dao: NoticiaDAO, private val webclient: NoticiaWebClient = NoticiaWebClient()) {
+class NoticiaRepository(private val dao: NoticiaDAO, private val webclient: NoticiaWebClient) {
 
     private val mediador = MediatorLiveData<Resource<List<Noticia>?>>()
 
@@ -19,25 +19,22 @@ class NoticiaRepository(private val dao: NoticiaDAO, private val webclient: Noti
         }
 
         val falhasDaWebApiLiveData = MutableLiveData<Resource<List<Noticia>?>>()
-
         mediador.addSource(falhasDaWebApiLiveData) { resourceDeFalha ->
             val resourceAtual = mediador.value
-            val resourceNovo: Resource<List<Noticia>?> = criaNovoResource(resourceAtual, resourceDeFalha)
+            val resourceNovo: Resource<List<Noticia>?> = if (resourceAtual != null) {
+                Resource(dado = resourceAtual.dado, erro = resourceDeFalha.erro)
+            } else {
+                resourceDeFalha
+            }
             mediador.value = resourceNovo
         }
 
-        buscaNaApi(quandoFalha = { erro ->
-            falhasDaWebApiLiveData.value = Resource(dado = null, erro = erro)
-        })
-        return mediador
-    }
+        buscaNaApi(
+            quandoFalha = { erro ->
+                falhasDaWebApiLiveData.value = Resource(dado = null, erro = erro)
+            })
 
-    private fun criaNovoResource(atual: Resource<List<Noticia>?>?,resourceDeFalha: Resource<List<Noticia>?>): Resource<List<Noticia>?> {
-        return if (atual != null) {
-            Resource(dado = atual.dado, erro = resourceDeFalha.erro)
-        } else {
-            resourceDeFalha
-        }
+        return mediador
     }
 
     fun salva(noticia: Noticia): LiveData<Resource<Void?>> {
@@ -88,8 +85,7 @@ class NoticiaRepository(private val dao: NoticiaDAO, private val webclient: Noti
         return dao.buscaTodos()
     }
 
-
-    private fun salvaNaApi(noticia: Noticia, quandoSucesso: () -> Unit, quandoFalha: (erro: String?) -> Unit) {
+    private fun salvaNaApi(noticia: Noticia,quandoSucesso: () -> Unit,quandoFalha: (erro: String?) -> Unit) {
         webclient.salva(
             noticia,
             quandoSucesso = {
@@ -108,18 +104,15 @@ class NoticiaRepository(private val dao: NoticiaDAO, private val webclient: Noti
         ).execute()
     }
 
-    private fun salvaInterno(noticia: Noticia, quandoSucesso: () -> Unit) {
+    private fun salvaInterno(noticia: Noticia,quandoSucesso: () -> Unit) {
         BaseAsyncTask(quandoExecuta = {
             dao.salva(noticia)
-        }, quandoFinaliza = { noticiaEncontrada ->
-            noticiaEncontrada?.let {
-                quandoSucesso()
-            }
+        }, quandoFinaliza = {
+            quandoSucesso()
         }).execute()
-
     }
 
-    private fun removeNaApi(noticia: Noticia, quandoSucesso: () -> Unit, quandoFalha: (erro: String?) -> Unit) {
+    private fun removeNaApi(noticia: Noticia,quandoSucesso: () -> Unit,quandoFalha: (erro: String?) -> Unit) {
         webclient.remove(
             noticia.id,
             quandoSucesso = {
@@ -129,7 +122,7 @@ class NoticiaRepository(private val dao: NoticiaDAO, private val webclient: Noti
         )
     }
 
-    private fun removeInterno(noticia: Noticia, quandoSucesso: () -> Unit) {
+    private fun removeInterno(noticia: Noticia,quandoSucesso: () -> Unit) {
         BaseAsyncTask(quandoExecuta = {
             dao.remove(noticia)
         }, quandoFinaliza = {
@@ -137,7 +130,7 @@ class NoticiaRepository(private val dao: NoticiaDAO, private val webclient: Noti
         }).execute()
     }
 
-    private fun editaNaApi(noticia: Noticia, quandoSucesso: () -> Unit, quandoFalha: (erro: String?) -> Unit) {
+    private fun editaNaApi(noticia: Noticia,quandoSucesso: () -> Unit,quandoFalha: (erro: String?) -> Unit) {
         webclient.edita(
             noticia.id, noticia,
             quandoSucesso = { noticiaEditada ->
@@ -147,4 +140,5 @@ class NoticiaRepository(private val dao: NoticiaDAO, private val webclient: Noti
             }, quandoFalha = quandoFalha
         )
     }
+
 }

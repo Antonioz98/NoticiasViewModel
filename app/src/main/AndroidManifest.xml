@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
-        android:name=".AppApplcation">
+        android:name=".AppApplication">
         <activity android:name=".ui.activity.FormularioNoticiaActivity" />
         <activity android:name=".ui.activity.VisualizaNoticiaActivity" />
         <activity android:name=".ui.activity.ListaNoticiasActivity">

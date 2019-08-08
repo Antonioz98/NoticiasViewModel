@@ -11,11 +11,7 @@ private const val REQUISICAO_NAO_SUCEDIDA = "Requisição não sucedida"
 
 class NoticiaWebClient(private val service: NoticiaService = AppRetrofit().noticiaService) {
 
-    private fun <T> executaRequisicao(
-        call: Call<T>,
-        quandoSucesso: (noticiasNovas: T?) -> Unit,
-        quandoFalha: (erro: String?) -> Unit
-    ) {
+    private fun <T> executaRequisicao(call: Call<T>,quandoSucesso: (noticiasNovas: T?) -> Unit,        quandoFalha: (erro: String?) -> Unit) {
         call.enqueue(object : Callback<T> {
             override fun onResponse(call: Call<T>, response: Response<T>) {
                 if (response.isSuccessful) {
@@ -31,7 +27,7 @@ class NoticiaWebClient(private val service: NoticiaService = AppRetrofit().notic
         })
     }
 
-    fun buscaTodas(quandoSucesso: (noticiasNovas: List<Noticia>?) -> Unit, quandoFalha: (erro: String?) -> Unit) {
+    fun buscaTodas(quandoSucesso: (noticiasNovas: List<Noticia>?) -> Unit,quandoFalha: (erro: String?) -> Unit) {
         executaRequisicao(
             service.buscaTodas(),
             quandoSucesso,
@@ -39,11 +35,7 @@ class NoticiaWebClient(private val service: NoticiaService = AppRetrofit().notic
         )
     }
 
-    fun salva(
-        noticia: Noticia,
-        quandoSucesso: (noticiasNovas: Noticia?) -> Unit,
-        quandoFalha: (erro: String?) -> Unit
-    ) {
+    fun salva(noticia: Noticia,quandoSucesso: (noticiasNovas: Noticia?) -> Unit,quandoFalha: (erro: String?) -> Unit) {
         executaRequisicao(service.salva(noticia), quandoSucesso, quandoFalha)
     }
 
@@ -51,7 +43,7 @@ class NoticiaWebClient(private val service: NoticiaService = AppRetrofit().notic
         executaRequisicao(service.edita(id, noticia), quandoSucesso, quandoFalha)
     }
 
-    fun remove(id: Long, quandoSucesso: (noticiasNovas: Void?) -> Unit, quandoFalha: (erro: String?) -> Unit) {
+    fun remove(id: Long,quandoSucesso: (noticiasNovas: Void?) -> Unit,quandoFalha: (erro: String?) -> Unit) {
         executaRequisicao(service.remove(id), quandoSucesso, quandoFalha)
     }
 

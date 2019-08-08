@@ -6,9 +6,7 @@ import br.com.alura.technews.model.Noticia
 import br.com.alura.technews.repository.NoticiaRepository
 import br.com.alura.technews.repository.Resource
 
-class ListaNoticiasViewModel(
-    private val repository: NoticiaRepository
-) : ViewModel() {
+class ListaNoticiasViewModel(private val repository: NoticiaRepository) : ViewModel() {
 
     fun buscaTodos() : LiveData<Resource<List<Noticia>?>> {
         return repository.buscaTodos()

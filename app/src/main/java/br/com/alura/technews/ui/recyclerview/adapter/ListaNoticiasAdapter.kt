@@ -15,10 +15,7 @@ class ListaNoticiasAdapter(
     var quandoItemClicado: (noticia: Noticia) -> Unit = {}
 ) : RecyclerView.Adapter<ListaNoticiasAdapter.ViewHolder>() {
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val viewCriada = LayoutInflater.from(context)
             .inflate(
                 R.layout.item_noticia,
@@ -41,8 +38,7 @@ class ListaNoticiasAdapter(
         notifyItemRangeInserted(0, this.noticias.size)
     }
 
-    inner class ViewHolder(itemView: View) :
-        RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private lateinit var noticia: Noticia
 
